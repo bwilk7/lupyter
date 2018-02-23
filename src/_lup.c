@@ -4,6 +4,12 @@
 /*
  *  Python API
  */
+struct module_state {
+	    PyObject *error;
+};
+
+
+static struct module_state _state;
 
 static void del_LuaState(PyObject *self) {
    lua_State *L;
@@ -35,7 +41,7 @@ static PyObject *_lup_process_chunk(PyObject *self, PyObject *args) {
 
    output = process_chunk(L, input);
    if (output) {
-      py_output = PyString_FromString(output);
+      py_output = PyBytes_FromString(output);
       free(output);
    }
    else {
@@ -54,6 +60,22 @@ static PyMethodDef lupMethods[] = {
 };
 
 
-DL_EXPORT(void) initlup() {
-   Py_InitModule("lup", lupMethods);
+static struct PyModuleDef moduledef = {
+       PyModuleDef_HEAD_INIT,
+       "lup",
+        NULL,
+        sizeof(struct module_state),
+        lupMethods,
+        NULL,
+	NULL,
+	NULL,
+	NULL
+};
+
+PyMODINIT_FUNC
+PyInit_lup(void)
+{
+//#   Py_InitModule("lup", lupMethods);
+PyObject *module = PyModule_Create(&moduledef);
+ return module;
 }
