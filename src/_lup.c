@@ -41,7 +41,7 @@ static PyObject *_lup_process_chunk(PyObject *self, PyObject *args) {
 
    output = process_chunk(L, input);
    if (output) {
-      py_output = PyBytes_FromString(output);
+      py_output = PyUnicode_FromString(output);
       free(output);
    }
    else {
